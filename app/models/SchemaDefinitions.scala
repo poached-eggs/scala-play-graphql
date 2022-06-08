@@ -1,6 +1,6 @@
 package models
 
-import dao.ProductRepo
+import dao.{PlayerRepo, TeamRepo}
 import sangria.schema._
 import sangria.macros.derive._
 
@@ -10,9 +10,9 @@ object SchemaDefinitions {
   // Models Types
 
   // Derive a GraphQL definition based in a Scala case class
-  implicit val PictureType: ObjectType[Unit, Picture] =
-    deriveObjectType[Unit, Picture](
-      ObjectTypeDescription("The product picture"),
+  implicit val PictureType: ObjectType[Unit, Image] =
+    deriveObjectType[Unit, Image](
+      ObjectTypeDescription("Image of the entity"),
       DocumentField("url", "Picture CDN URL")
     )
 
@@ -24,38 +24,75 @@ object SchemaDefinitions {
     )
   )
 
-  val ProductType: ObjectType[Unit, Product] =
-    deriveObjectType[Unit, Product](
+  val TeamType: ObjectType[Unit, Team] =
+    deriveObjectType[Unit, Team](
       Interfaces(IdentifiableType),
-      IncludeMethods("picture")
+      IncludeMethods("image")
+    )
+
+  val PlayerType: ObjectType[Unit, Player] =
+    deriveObjectType[Unit, Player](
+      Interfaces(IdentifiableType),
+      IncludeMethods(
+        "fullName",
+        "fullDescription"
+      )
     )
 
   // ============================================================
   // Query Type
 
   val Id: Argument[String] = Argument("id", StringType)
+  val Nationality: Argument[String] = Argument("nationality", StringType)
 
-  val QueryType: ObjectType[ProductRepo, Unit] = ObjectType(
-    "Query",
-    fields[ProductRepo, Unit](
+  val TeamQueryType: ObjectType[TeamRepo, Unit] = ObjectType(
+    "TeamQuery",
+    fields[TeamRepo, Unit](
       Field(
-        name = "product",
-        fieldType = OptionType(ProductType),
-        description = Some("Returns a product with specific `id`."),
+        name = "team",
+        fieldType = OptionType(TeamType),
+        description = Some("Returns a team with specific `id`."),
         arguments = Id :: Nil,
-        resolve = c => c.ctx.product(c arg Id)
+        resolve = c => c.ctx.team(c arg Id)
       ),
       Field(
-        name = "products",
-        fieldType = ListType(ProductType),
-        description = Some("Returns a list of all available products."),
-        resolve = _.ctx.products
+        name = "teams",
+        fieldType = ListType(TeamType),
+        description = Some("Returns a list of all teams."),
+        resolve = _.ctx.teams
+      )
+    )
+  )
+
+  val PlayerQueryType: ObjectType[PlayerRepo, Unit] = ObjectType(
+    "PlayerQuery",
+    fields[PlayerRepo, Unit](
+      Field(
+        name = "player",
+        fieldType = OptionType(PlayerType),
+        description = Some("Returns a player with specific `id`."),
+        arguments = Id :: Nil,
+        resolve = c => c.ctx.player(c arg Id)
+      ),
+      Field(
+        name = "players",
+        fieldType = ListType(PlayerType),
+        description = Some("Returns a list of all available players."),
+        resolve = _.ctx.players
+      ),
+      Field(
+        name = "playersByNationality",
+        fieldType = ListType(PlayerType),
+        description = Some("Returns a list players for a given nationality."),
+        arguments = Nationality :: Nil,
+        resolve = c => c.ctx.playersByNationality(c arg Nationality)
       )
     )
   )
 
   // ============================================================
-  // Schema
-  val ProductSchema: Schema[ProductRepo, Unit] = Schema(QueryType)
+  // Schema(s)
+  val TeamSchema: Schema[TeamRepo, Unit] = Schema(TeamQueryType)
+  val PlayerSchema: Schema[PlayerRepo, Unit] = Schema(PlayerQueryType)
 
 }

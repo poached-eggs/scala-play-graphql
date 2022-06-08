@@ -1,7 +1,7 @@
 package services
 
-import dao.ProductRepo
-import models.{GraphqlRequest, SchemaDefinitions}
+import dao.GraphqlDao
+import models.GraphqlRequest
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.Request
 import sangria.execution.Executor
@@ -12,9 +12,22 @@ import sangria.marshalling.playJson._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class GraphqlService(implicit ec: ExecutionContext) {
+trait GraphqlService {
+  def parseRequest(request: Request[JsValue]): GraphqlRequest
+  def executeQuery(
+      query: String,
+      variables: Option[JsObject],
+      operation: Option[String]
+    ): Future[Node]
+}
 
-  def parseRequest(request: Request[JsValue]): GraphqlRequest = {
+class GraphqlServiceImpl[A](
+    graphqlDao: GraphqlDao[A]
+  )(implicit
+    ec: ExecutionContext
+  ) extends GraphqlService {
+
+  override def parseRequest(request: Request[JsValue]): GraphqlRequest = {
     val query = (request.body \ "query").as[String]
     val operation = (request.body \ "operationName").asOpt[String]
     val variables = (request.body \ "variables").toOption.flatMap {
@@ -25,7 +38,7 @@ class GraphqlService(implicit ec: ExecutionContext) {
     GraphqlRequest(query, operation, variables)
   }
 
-  def executeQuery(
+  override def executeQuery(
       query: String,
       variables: Option[JsObject],
       operation: Option[String]
@@ -34,9 +47,9 @@ class GraphqlService(implicit ec: ExecutionContext) {
       case Success(queryAst) =>
         Executor
           .execute(
-            schema = SchemaDefinitions.ProductSchema,
+            schema = graphqlDao.schema,
             queryAst = queryAst,
-            userContext = new ProductRepo,
+            userContext = graphqlDao.dao,
             operationName = operation,
             variables = variables.getOrElse(Json.obj())
           )
@@ -45,5 +58,4 @@ class GraphqlService(implicit ec: ExecutionContext) {
 
   private def parseVariables(variables: String): JsObject =
     if (variables.trim == "" || variables.trim == "null") Json.obj() else Json.parse(variables).as[JsObject]
-
 }

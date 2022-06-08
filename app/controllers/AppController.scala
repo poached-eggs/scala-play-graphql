@@ -5,9 +5,9 @@ import play.api.libs.json._
 import play.api.mvc._
 import sangria.execution._
 import sangria.marshalling.playJson._
-import services.Service
+import services.{GraphqlService, Service}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AppController @Inject() (
@@ -17,16 +17,25 @@ class AppController @Inject() (
     val ec: ExecutionContext
   ) extends AbstractController(cc) {
 
-  def graphqlBody: Action[JsValue] = Action.async(parse.json) { request =>
-    val graphqlRequest = service.graphqlService.parseRequest(request)
+  def teams: Action[JsValue] = Action.async(parse.json) { request =>
+    dispatchQuery(service.teamService, request)
+      .map(Ok(_))
+      .recover(handleQueryExecutionError(_))
+  }
+
+  def players: Action[JsValue] = Action.async(parse.json) { request =>
+    dispatchQuery(service.playerService, request)
+      .map(Ok(_))
+      .recover(handleQueryExecutionError(_))
+  }
+
+  def dispatchQuery(graphqlService: GraphqlService, request: Request[JsValue]): Future[JsValue] = {
+    val graphqlRequest = graphqlService.parseRequest(request)
     val query = graphqlRequest.query
     val operation = graphqlRequest.operation
     val variables = graphqlRequest.variables
-    service
-      .graphqlService
+    graphqlService
       .executeQuery(query, variables, operation)
-      .map(Ok(_))
-      .recover(handleQueryExecutionError(_))
   }
 
   private def handleQueryExecutionError(e: Throwable): Result = e match {

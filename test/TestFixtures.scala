@@ -1,53 +1,79 @@
 object TestFixtures {
-  val ProductQuery: String =
+  val TeamQuery: String =
     """
-        query MyProduct {
-          product(id: "2") {
+        query MyTeam {
+          team(id: "2") {
             name
-            description
-            picture(size: 500) {
+            country
+            image(size: 500) {
               width, height, url
             }
           }
         }
       """
 
-  val ProductListQuery: String =
+  val PlayerQuery: String =
     """
-        query MyProduct {
-          products {
+        query MyPlayer {
+          player(id: "1") {
+            firstName
+            lastName
+            fullName
+            fullDescription
+          }
+        }
+      """
+
+  val TeamListQuery: String =
+    """
+        query MyTeam {
+          teams {
             name
           }
         }
       """
 
-  val ExpectedProductResult =
+  val ExpectedTeamResult =
     """
         {
           "data": {
-              "product": {
-                  "name": "Health Potion",
-                  "description": "+50 HP",
-                  "picture": {
+              "team": {
+                  "name": "Juventus",
+                  "country": "Italy",
+                  "image": {
                       "width": 500,
                       "height": 500,
-                      "url": "//cdn.com/500/2.jpg"
+                      "url": "//foo.bar/500/2.jpg"
                   }
               }
           }
         }
         """
 
-  val ExpectedProductListResult =
+  val ExpectedPlayerResult =
     """
         {
           "data": {
-              "products": [
+              "player": {
+                  "firstName": "Luis",
+                  "lastName": "Figo",
+                  "fullName": "Luis Figo",
+                  "fullDescription": "Luis Figo (RW) (Portugal)"
+              }
+          }
+        }
+        """
+
+  val ExpectedTeamListResult =
+    """
+        {
+          "data": {
+              "teams": [
                   {
-                      "name": "Cheesecake"
+                      "name": "FC Barcelona"
                   },
                   {
-                      "name": "Health Potion"
+                      "name": "Juventus"
                   }
               ]
           }

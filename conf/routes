@@ -11,4 +11,5 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 
 # GraphQL tutorial
-POST    /graphqlBody                controllers.AppController.graphqlBody
+POST    /team                       controllers.AppController.teams
+POST    /player                     controllers.AppController.players
