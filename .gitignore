@@ -1,6 +1,3 @@
-*.class
-*.log
-
 logs
 target
 /.bsp
@@ -10,3 +7,7 @@ target
 /.project
 /.settings
 /RUNNING_PID
+
+# Windows artifacts
+.g8
+null
