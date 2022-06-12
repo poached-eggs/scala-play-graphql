@@ -1,6 +1,6 @@
 name := """scala-play-graphql"""
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -22,8 +22,18 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-optics" % circeVersion
 )
 
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.example.controllers._"
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.example.binders._"
+assembly / assemblyMergeStrategy := {
+  case PathList("module-info.class", _*)                                             => MergeStrategy.discard
+  case PathList("META-INF", _*)                                                      => MergeStrategy.discard
+  case referenceOverrides if referenceOverrides.contains("reference-overrides.conf") => MergeStrategy.concat
+  case a if a.contains("javax/activation")                                           => MergeStrategy.first
+  case o =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(o)
+}
+
+// Skip scaladoc
+Compile / doc / sources := Nil
+Compile / packageDoc / publishArtifact := false

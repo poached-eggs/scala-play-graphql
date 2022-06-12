@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+
+  scala-play-graphql:
+    build: .
+    container_name: scala-play-graphql
+    ports:
+      - "9000:9000"
+    environment:
+      HTTP_SECRET_KEY: "some-long-secret-should-be-encrypted-and-pulled-from-somewhere"
