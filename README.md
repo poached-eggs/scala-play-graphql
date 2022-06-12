@@ -7,11 +7,22 @@ and [Sangria Playground](https://github.com/sangria-graphql/sangria-playground).
 
 ## Running locally
 
+### With sbt
+
 ```
 sbt clean compile run
 ```
 
 Hit the page at `locahost:9000`
+
+### With Docker
+
+Assuming you have Docker daemon running locally:
+```
+docker-compose build
+docker-compose up
+```
+Hit the page at `locahost:9000/health-check`
 
 ## Submitting a GraphQL request
 
@@ -51,7 +62,7 @@ Should return:
 			"image": {
 				"width": 500,
 				"height": 500,
-				"url": "//cdn.com/500/1.jpg"
+				"url": "//foo.bar/500/1.jpg"
 			}
 		},
 		"teams": [
@@ -67,11 +78,10 @@ Should return:
 ```
 
 ## TODOs
-- Dockerize the application
-- Use `docker-compose` to build and run app locally
 - Add DB with MySQL and store data there instead with migrations
 - Get POST with query parameter to work
 - Add e-2-e test
+- Github actions to run tests
 
 ## References
 - [sangria-graphql](https://sangria-graphql.github.io/getting-started/)
