@@ -19,10 +19,17 @@ libraryDependencies ++= Seq(
   // Circe
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
-  "io.circe" %% "circe-optics" % circeVersion
+  "io.circe" %% "circe-optics" % circeVersion,
+
+  // Database Connection
+  jdbc,
+  "org.postgresql" % "postgresql" % "42.3.6",
+
+  // Evolutions
+  evolutions
 )
 
-javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+Test / javaOptions += "-Dconfig.file=conf/application.test.conf"
 
 assembly / assemblyMergeStrategy := {
   case PathList("module-info.class", _*)                                             => MergeStrategy.discard
@@ -37,3 +44,6 @@ assembly / assemblyMergeStrategy := {
 // Skip scaladoc
 Compile / doc / sources := Nil
 Compile / packageDoc / publishArtifact := false
+
+// Disable tests for faster builds (dev purposes)
+//test in assembly := {}
