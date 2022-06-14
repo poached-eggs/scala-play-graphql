@@ -7,13 +7,23 @@ and [Sangria Playground](https://github.com/sangria-graphql/sangria-playground).
 
 ## Running locally
 
+Few environment variables are required:
+```
+HTTP_SECRET_KEY
+DB_HOST
+DB_USERNAME
+DB_PASSWORD
+```
+
 ### With sbt
 
 ```
 sbt clean compile run
 ```
 
-Hit the page at `locahost:9000`
+You also need to run an instance of PosgtreSQL locally with the database `docker`.
+
+Hit the page at `locahost:9000/health-check`.
 
 ### With Docker
 
@@ -23,6 +33,24 @@ docker-compose build
 docker-compose up
 ```
 Hit the page at `locahost:9000/health-check`
+
+You can also inspect the database:
+```
+docker exec -it db psql -U postgres
+\c docker
+\dt
+```
+Which should display:
+```
+                List of relations
+ Schema |         Name         | Type  |  Owner
+--------+----------------------+-------+----------
+ public | play_evolutions      | table | postgres
+ public | play_evolutions_lock | table | postgres
+ public | player               | table | postgres
+ public | team                 | table | postgres
+(4 rows)
+```
 
 ## Submitting a GraphQL request
 
@@ -78,7 +106,7 @@ Should return:
 ```
 
 ## TODOs
-- Add DB with MySQL and store data there instead with migrations
+- Store & retrieve data from DB
 - Get POST with query parameter to work
 - Add e-2-e test
 - Github actions to run tests

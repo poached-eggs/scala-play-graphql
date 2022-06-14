@@ -2,10 +2,26 @@ version: "3"
 
 services:
 
+  db:
+    image: postgres:14.1-alpine
+    container_name: db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "docker"
+
   scala-play-graphql:
     build: .
     container_name: scala-play-graphql
+    depends_on:
+      - db
     ports:
       - "9000:9000"
     environment:
       HTTP_SECRET_KEY: "some-long-secret-should-be-encrypted-and-pulled-from-somewhere"
+      DB_HOST: "jdbc:postgresql://db/docker"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "postgres"

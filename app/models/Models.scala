@@ -23,9 +23,9 @@ case class Player(
     id: String,
     firstName: String,
     lastName: String,
-    position: String,
+    fieldPosition: String,
     nationality: String
   ) extends Identifiable {
   val fullName: String = s"$firstName $lastName"
-  val fullDescription: String = s"$fullName ($position) ($nationality)"
+  val fullDescription: String = s"$fullName ($fieldPosition) ($nationality)"
 }
