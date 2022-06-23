@@ -1,12 +1,12 @@
 package services
 
-import dao.GraphqlDao
+import dao.GraphQlRepo
 
 import scala.concurrent.ExecutionContext
 
 object ServiceFactory {
 
-  def generate[A](dao: GraphqlDao[A])(implicit ec: ExecutionContext) =
+  def generate[A](dao: GraphQlRepo[A])(implicit ec: ExecutionContext) =
     new GraphqlServiceImpl[A](dao)
 
 }

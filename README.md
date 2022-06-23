@@ -17,11 +17,10 @@ DB_PASSWORD
 
 ### With sbt
 
+Firstly, you need to run an instance of PosgtreSQL locally with a database named `docker`. Then you can run:
 ```
 sbt clean compile run
 ```
-
-You also need to run an instance of PosgtreSQL locally with the database `docker`.
 
 Hit the page at `locahost:9000/health-check`.
 
@@ -54,20 +53,13 @@ Which should display:
 
 ## Submitting a GraphQL request
 
-Check all the available routes in the routes file.
+Check all the available routes in the `conf/routes` file.
 
-You can hit `/team` with the body:
+You can get a list of teams by hitting `/team` with the body:
 ```
 query MyTeam {
-    team(id: "1") {
-        name
-        country
-        image(size: 500) {
-            width, height, url
-        }
-    }
     teams {
-        name
+        name id country
     }
 }
 ```
@@ -77,36 +69,62 @@ Or using curl:
 curl --request POST \
   --url http://localhost:9000/team \
   --header 'Content-Type: application/json' \
-  --data '{"query":"query MyTeam {\n\tteam(id: \"1\") {\n\t\tname\n\t\tcountry\n\t\timage(size: 500) {\n\t\t\twidth, height, url\n\t\t}\n\t}\n\tteams {\n\t\tname\n\t}\n}","operationName":"MyTeam"}'
+  --data '{"query":"query MyTeam {\n\tteams {\n\t\tname id country\n\t}\n}","operationName":"MyTeam"}'
 ```
 
-Should return:
-```
+Should return (note the `id` values will differ since they are autogenerate during the bootstrap of the database):
+```json
 {
 	"data": {
-		"team": {
-			"name": "FC Barcelona",
-			"country": "Spain",
-			"image": {
-				"width": 500,
-				"height": 500,
-				"url": "//foo.bar/500/1.jpg"
-			}
-		},
 		"teams": [
 			{
-				"name": "FC Barcelona"
+				"name": "F.C. Barcelona",
+				"id": "ae8647c6-cc7b-4974-9037-62561f0a3c3f",
+				"country": "Spain"
 			},
 			{
-				"name": "Juventus"
-			}
+				"name": "Real Madrid",
+				"id": "83a9514c-6c67-4b1c-b391-10b8357e1b0d",
+				"country": "Spain"
+			},
+			# ...
 		]
 	}
 }
 ```
 
+You can get use one of the team `id` values to search of that team info:
+```
+query MyTeam {
+	team(id: "ae8647c6-cc7b-4974-9037-62561f0a3c3f") {
+		name
+		country
+		image(size: 500) {
+			width, height, url
+		}
+	}
+}
+```
+
+To get:
+```json
+{
+	"data": {
+		"team": {
+			"name": "F.C. Barcelona",
+			"country": "Spain",
+			"image": {
+				"width": 500,
+				"height": 500,
+				"url": "//foo.bar/500/ae8647c6-cc7b-4974-9037-62561f0a3c3f.jpg"
+			}
+		}
+	}
+}
+```
+
 ## TODOs
-- Store & retrieve data from DB
+- Log events to a DB
 - Get POST with query parameter to work
 - Add e-2-e test
 - Github actions to run tests

@@ -10,7 +10,6 @@ val circeVersion = "0.14.1"
 
 libraryDependencies ++= Seq(
   guice,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
 
   // GraphQL
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",
@@ -26,7 +25,14 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.3.6",
 
   // Evolutions
-  evolutions
+  evolutions,
+
+  // Anorm
+  "org.playframework.anorm" %% "anorm" % "2.6.5",
+
+  // Tests
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
+  "org.scalatestplus" %% "mockito-4-5" % "3.2.12.0" % "test" // mockito needed here since it was removed in scalatestplus-play 5.1.0
 )
 
 Test / javaOptions += "-Dconfig.file=conf/application.test.conf"
@@ -46,4 +52,4 @@ Compile / doc / sources := Nil
 Compile / packageDoc / publishArtifact := false
 
 // Disable tests for faster builds (dev purposes)
-//test in assembly := {}
+//assembly / test := {}
