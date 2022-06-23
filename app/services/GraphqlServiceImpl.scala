@@ -1,6 +1,6 @@
 package services
 
-import dao.GraphqlDao
+import dao.GraphQlRepo
 import models.GraphqlRequest
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.Request
@@ -22,7 +22,7 @@ trait GraphqlService {
 }
 
 class GraphqlServiceImpl[A](
-    graphqlDao: GraphqlDao[A]
+    repo: GraphQlRepo[A]
   )(implicit
     ec: ExecutionContext
   ) extends GraphqlService {
@@ -47,9 +47,9 @@ class GraphqlServiceImpl[A](
       case Success(queryAst) =>
         Executor
           .execute(
-            schema = graphqlDao.schema,
+            schema = repo.schema,
             queryAst = queryAst,
-            userContext = graphqlDao.dao,
+            userContext = repo.dao,
             operationName = operation,
             variables = variables.getOrElse(Json.obj())
           )

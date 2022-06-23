@@ -1,6 +1,6 @@
 package services
 
-import dao.{DaoFactory, PlayerRepo, TeamRepo}
+import dao.{PlayerDaoImpl, PlayerRepo, PostgresDB, GraphQlRepo, TeamDaoImpl, TeamRepo}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -9,10 +9,13 @@ import scala.concurrent.ExecutionContext
 class Service @Inject() (
     env: play.Environment
   )(implicit
+    graphQlDb: PostgresDB,
     ec: ExecutionContext
   ) {
 
-  val teamService: GraphqlServiceImpl[TeamRepo] = ServiceFactory.generate(DaoFactory.genTeamDao)
-  val playerService: GraphqlServiceImpl[PlayerRepo] = ServiceFactory.generate(DaoFactory.genPlayerDao)
+  implicit val teamDaoImpl: TeamDaoImpl = new TeamDaoImpl()
+  implicit val playerDaoImpl: PlayerDaoImpl = new PlayerDaoImpl()
+  val teamService: GraphqlServiceImpl[TeamRepo] = ServiceFactory.generate(GraphQlRepo.genTeamRepo)
+  val playerService: GraphqlServiceImpl[PlayerRepo] = ServiceFactory.generate(GraphQlRepo.genPlayerRepo)
 
 }
