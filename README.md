@@ -26,7 +26,7 @@ DB_PASSWORD
 ### With sbt
 
 Firstly, you need to run an instance of PosgtreSQL locally with a database named `docker`. Then you can run:
-```shell
+```console
 sbt clean compile run
 ```
 
@@ -35,14 +35,14 @@ Hit the page at `locahost:9000/health-check`.
 ### With Docker
 
 Assuming you have Docker daemon running locally:
-```shell
+```console
 docker-compose build
 docker-compose up
 ```
 Hit the page at `locahost:9000/health-check`
 
 You can also inspect the database:
-```shell
+```console
 docker exec -it db psql -U postgres
 \c docker
 \dt
@@ -73,7 +73,7 @@ query MyTeam {
 ```
 
 Or using curl:
-```shell
+```console
 curl --request POST \
   --url http://localhost:9000/team \
   --header 'Content-Type: application/json' \
