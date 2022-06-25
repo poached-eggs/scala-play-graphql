@@ -42,7 +42,6 @@ class SchemaSpec extends AsyncFunSuite with Matchers with MockitoSugar {
     val futResult = playerService.executeQuery(query, variables = None, operation = None)
     when(playerDaoImpl.getPLayer(playerId)).thenReturn(stubbedRecord)
     futResult.map(result => result mustBe expectedResult.toJson)
-    1 mustBe 2 // Test CI fails with GHA
   }
 
   implicit private class StringUtils(s: String) {
