@@ -1,7 +1,15 @@
 # scala-play-graphql
-Playing around with Play and GraphQL in scala.
 
-Following the tutorial from [sangria-graphql](https://sangria-graphql.github.io/getting-started/)
+Sample service written in Play with scala and GraphQL.
+
+This sample service:
+- Stores few soccer players and team information.
+- Serves clients with player and team information via endpoints (examples below)
+- Uses a PostgreSQL database for persistent storage.
+- Uses DB migrations to provision the schema and sample data in the database.
+- Uses Github Actions to run automated tests on every PR.
+
+First time using GraphQL, so  I followed the tutorial from [sangria-graphql](https://sangria-graphql.github.io/getting-started/)
 and [Sangria Playground](https://github.com/sangria-graphql/sangria-playground).
 
 
@@ -18,7 +26,7 @@ DB_PASSWORD
 ### With sbt
 
 Firstly, you need to run an instance of PosgtreSQL locally with a database named `docker`. Then you can run:
-```
+```shell
 sbt clean compile run
 ```
 
@@ -27,14 +35,14 @@ Hit the page at `locahost:9000/health-check`.
 ### With Docker
 
 Assuming you have Docker daemon running locally:
-```
+```shell
 docker-compose build
 docker-compose up
 ```
 Hit the page at `locahost:9000/health-check`
 
 You can also inspect the database:
-```
+```shell
 docker exec -it db psql -U postgres
 \c docker
 \dt
@@ -65,7 +73,7 @@ query MyTeam {
 ```
 
 Or using curl:
-```
+```shell
 curl --request POST \
   --url http://localhost:9000/team \
   --header 'Content-Type: application/json' \
@@ -86,8 +94,7 @@ Should return (note the `id` values will differ since they are autogenerate duri
 				"name": "Real Madrid",
 				"id": "83a9514c-6c67-4b1c-b391-10b8357e1b0d",
 				"country": "Spain"
-			},
-			# ...
+			}
 		]
 	}
 }
@@ -127,7 +134,6 @@ To get:
 - Log events to a DB
 - Get POST with query parameter to work
 - Add e-2-e test
-- Github actions to run tests
 
 ## References
 - [sangria-graphql](https://sangria-graphql.github.io/getting-started/)
