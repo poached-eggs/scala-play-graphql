@@ -131,7 +131,7 @@ To get:
 ```
 
 ## TODOs
-- Log events to a DB
+- Authentication
 - Get POST with query parameter to work
 - Add e-2-e test
 

@@ -28,12 +28,21 @@ trait GenericSelectDbTrait {
 
 }
 
+trait GenericInsertDbTrait {
+  this: GenericAbstractDb =>
+
+  def insertRecord[A](sql: String, args: NamedParameter*)(implicit parser: RowParser[A]): Future[A] = Future(
+    db.withConnection(implicit conn => SQL(sql).on(args: _*).executeInsert(parser.single))
+  )(dbEC)
+}
+
 // ====================================================================================
 // Database - Implementation
 // ====================================================================================
 class PostgresDB @Inject() (db: Database, dbEC: DefaultDbExecutionContext)
     extends GenericAbstractDb(db, dbEC)
        with GenericSelectDbTrait
+       with GenericInsertDbTrait
 
 object QueryUtils {
   def makeSingleWhereClause(singleClause: String) = s"where $singleClause"
