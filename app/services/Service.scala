@@ -1,6 +1,6 @@
 package services
 
-import dao.{PlayerDaoImpl, PlayerRepo, PostgresDB, GraphQlRepo, TeamDaoImpl, TeamRepo}
+import dao.{GraphQlRepo, PlayerDaoImpl, PlayerRepo, PostgresDB, RequestMetadataDaoImpl, TeamDaoImpl, TeamRepo}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -12,6 +12,9 @@ class Service @Inject() (
     graphQlDb: PostgresDB,
     ec: ExecutionContext
   ) {
+
+  private val requestMetadataDao = new RequestMetadataDaoImpl(debugMode = true)
+  val requestMetadataService = new RequestMetadataServiceImpl(requestMetadataDao)
 
   implicit val teamDaoImpl: TeamDaoImpl = new TeamDaoImpl()
   implicit val playerDaoImpl: PlayerDaoImpl = new PlayerDaoImpl()

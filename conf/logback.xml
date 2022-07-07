@@ -39,4 +39,9 @@
     <appender-ref ref="ASYNCSTDOUT" />
   </root>
 
+  <!--  Enable INFO logging to the console-->
+  <root level="INFO">
+    <appender-ref ref="ASYNCSTDOUT"/>
+  </root>
+
 </configuration>
